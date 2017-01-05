@@ -2,15 +2,17 @@
   include('includes/connexion.inc.php');
   include('includes/haut.inc.php');
 
+  $message = '';
   if(isset($_GET['id']) && !empty($_GET['id']))
   {
     $id = $_GET['id'];
     $sql = 'SELECT * from messages where id='.$id.'';
     $requete = $pdo->query($sql);
-    if ($data = $requete->fetch())
+    if($data = $requete->fetch())
     {
       $message =  $data['contenu'];
-    }else{
+    }else
+    {
       header("Location: index.php");
     }
   }
@@ -38,8 +40,8 @@
   while ($data = $stmt->fetch())
   {
 ?>
-	<blockquote>
-	   <?= $data['contenu'] ?>
+  <blockquote>
+    <?= $data['contenu'] ?>
       <div class="col-sm-2">
         <?php echo "<a href='index.php?id=" .$data['id']. "'><button type='button' class='btn btn-warning'>Modifier</button></a>" ?>
       </div>
@@ -49,30 +51,10 @@
       <div class="col-sm-12">
         <?= "Ajouté le ".$data['date'] ?>
       </div>
-	</blockquote>
+    </blockquote>
 <?php
   }
 ?>
 
-<?php include('includes/bas.inc.php'); ?>
-
-<?php
-$query = 'SELECT * FROM messages';
-$stmt = $pdo->query($query);
-
-while ($data = $stmt->fetch()) {
-	?>
-	<blockquote>
-		<?= $data['contenu'] ?>
-    <div class="col-sm-2">
-        <?php echo "<a href='index.php?id=" .$data['id']. "'><button type='button' class='btn btn-warning'>Modifier</button></a>" ?>
-    </div>
-    <div class="col-sm-2">
-        <?php echo "<a href='suppression.php?id=" .$data['id']. "'><button type='button' class='btn btn-danger'>Supprimer</button></a>" ?>
-    </div>
-	</blockquote>
-	<?php
-}
-?>
 
 <?php include('includes/bas.inc.php'); ?>

@@ -2,7 +2,8 @@
 	include ('includes/connexion.inc.php');
   include ('includes/haut.inc.php');
 
-  if(isset($_POST['pseudo'])){
+  if(isset($_POST['pseudo']))
+	{
     $password = md5($_POST['password']);
     $pseudo=$_POST['pseudo'];
     $connecte = false;
@@ -17,10 +18,11 @@
       $update = "UPDATE utilisateur SET sid='$sid' where pseudo='$pseudo'";
       $prepare = $pdo->prepare($update);
       $prepare->execute();
-    }
-  }else{
+  	}else
+		{
       header("Location: connexion.php");
-  }
+  	}
+	}
 ?>
 
 <form method="post" action="connexion.php">
