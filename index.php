@@ -68,19 +68,50 @@
 <?php
   }
 ?>
-<?php
+  <!--/*$mpp=5;
+  $total_message='SELECT COUNT(*) AS total FROM messages';
+  $donnees_total=$total_message;
+  $total=$donnees_total['total'];
+  $nb_pages=ceil($total/$mpp);
+  if(isset($_GET['page']))
+  {
+    $page=intval($_GET['page']);
+    if($page>$nb_pages)
+    {
+      $page=$nb_pages;
+    }
+  }
+  else
+  {
+    $page=1;
+  }
+  $index=($page-1)*$mpp;
+  $retour_messages='SELECT * FROM messages ORDER BY id DESC LIMIT '.$index.', '.$mpp.'';
 
-?>
-    <ul class="pagination">
-      <ul class="pager">
-        <li><a href="prec"><</a></li>
-        <li><a href="p1">1</a></li>
-        <li><a href="p2">2</a></li>
-        <li><a href="p3">3</a></li>
-        <li><a href="p4">4</a></li>
-        <li><a href="p5">5</a></li>
-        <li><a href="sui">></a></li>
-      </ul>
-    </ul>
+  while($donnees_messages=$retour_messages)
+  {
+    echo '<table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
+                <tr>
+                     <td><strong>Ecrit par : '.$donnees_messages['pseudo'].'</strong></td>
+                </tr>
+                <tr>
+                     <td>'.nl2br($donnees_messages['contenu']).'</td>
+                </tr>
+            </table><br /><br />';
+  }
+  echo '<p align="center">Page : ';
+  for($i=1; $i<=$nb_pages; $i++)
+  {
+     if($i==$page)
+     {
+       echo ' [ '.$i.' ] ';
+     }
+     else
+     {
+       echo ' <a href="messages.php?page='.$i.'">'.$i.'</a> ';
+     }
+   }
+echo '</p>';
+?>*/-->
 
 <?php include('includes/bas.inc.php'); ?>
