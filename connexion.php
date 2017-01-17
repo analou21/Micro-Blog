@@ -2,25 +2,31 @@
 	include ('includes/connexion.inc.php');
   include ('includes/haut.inc.php');
 
-  if(isset($_POST['pseudo']))
+	if(isset($_POST['pseudo']) && isset($_POST['password']))
 	{
-    $password = md5($_POST['password']);
-    $pseudo=$_POST['pseudo'];
-    $connecte = false;
-    $query = "SELECT * from utilisateur where pseudo='$pseudo' and password='$password'";
-    $prep = $pdo->prepare($query);
-    $prep->execute();
-    if ($prep->fetch())
-    {
-      $connecte=true;
-      $sid = $pseudo.time();
-      setcookie('sid',$sid,time() + 365*24*3600, null, null, false, true);
-      $update = "UPDATE utilisateur SET sid='$sid' where pseudo='$pseudo'";
-      $prepare = $pdo->prepare($update);
-      $prepare->execute();
-  	}else
+  	$pwd=$_POST['password'];
+  	$pseudo=$_POST['pseudo'];
+
+  	$query="SELECT * FROM utilisateur WHERE pseudo=? and mdp=?";
+  	$prep = $pdo->prepare($query);
+  	$prep->bindValue(1,$pseudo);
+  	$prep->bindValue(2,$pwd);
+  	$prep->execute();
+
+  	if($prep->fetch())
 		{
-      header("Location: connexion.php");
+    	?>
+    		<script>alert("Connecté sous le pseudo : <?php echo $pseudo ?> ");</script>
+    	<?php
+    	$sid=$pseudo.time();
+    	$sid=md5($sid);
+    	setcookie("sid",$sid,time()+300,null,null,false,true);
+    	$query="UPDATE utilisateur SET sid=? where pseudo=?";
+    	$prep = $pdo->prepare($query);
+    	$prep->bindValue(1,$sid);
+    	$prep->bindValue(2,$pseudo);
+    	$prep->execute();
+    	header("Location:index.php");
   	}
 	}
 ?>
