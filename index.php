@@ -2,6 +2,13 @@
   include('includes/connexion.inc.php');
   include('includes/haut.inc.php');
 
+/*
+On initialise les varibles message et id
+Si la variable id existe et qu'elle n'est pas vide
+  On récupère la variable id et on va chercher, dans la BDD, tous les messages qui correspondent à cet id
+    Si la requête retourne des messages, on les affiche sur la page
+    Sinon on redirige vers la page d'accueil sans modification
+*/
   $message = '';
   $id = '';
   if(isset($_GET['id']) && !empty($_GET['id']))
@@ -19,6 +26,8 @@
   }
 ?>
 <?php
+
+/*On affiche les boutons de création, modification et suppression seulement si l'utilisateur est connecté*/
   if($connecte == true)
   {
 ?>
@@ -27,7 +36,7 @@
         <div class="col-sm-10">
           <div class="form-group">
             <textarea id="message" name="message" class="form-control" placeholder="Message">
-              <?php echo $message ?>
+              <?php echo $message ?><!-- On affiche le message -->
             </textarea>
             <input type="hidden" name="id" value="<?php echo $id ?>"/>
           </div>
@@ -41,6 +50,23 @@
   }
 ?>
 <?php
+/*Code consacré à la pagination*/
+  $index = 0;
+  $mpp = 4;
+
+  if(isset($_GET['p']) && !empty($_GET['p']))
+  {
+    $page = $_GET['p'];
+    $index = ($page - 1)* $mpp;
+  }
+  $query = 'SELECT * , messages.id as message_id FROM messages INNER JOIN users ON messages.user_id = users.id LIMIT '.$index.','.$mpp.'';
+  $stmt = $pdo->prepare($query);
+  $stmt->execute();
+/*
+On récupère les messages dans la BDD
+Si l'utilisateur clique sur modifier, on affiche le nouveau message
+Si l'utilisateur clique sur supprimer, on supprime le message sélectionné
+*/
   $query = 'SELECT * FROM messages';
   $stmt = $pdo->query($query);
   while ($data = $stmt->fetch())
@@ -53,65 +79,24 @@
         {
       ?>
           <div class="col-sm-2">
-            <?php echo "<a href='index.php?id=" .$data['id']. "'><button type='button' class='btn btn-warning'>Modifier</button></a>" ?>
+            <?php echo "<a href='index.php?id=" .$data['message_id']. "'></a>" ?>
           </div>
           <div class="col-sm-2">
-            <?php echo "<a href='suppression.php?id=" .$data['id']. "'><button type='button' class='btn btn-danger'>Supprimer</button></a>" ?>
+            <?php echo "<a href='suppression.php?id=" .$data['message_id']. "'></a>" ?>
           </div>
       <?php
         }
       ?>
+      <!-- Affichage de la date et de l'auteur du message -->
       <div class="col-sm-12">
         <?= "Ajouté le ".$data['date'] ?>
+      </div>
+      <div class="col-sm-12">
+        <?= "Ajouté par ".$data['pseudo'] ?>
       </div>
     </blockquote>
 <?php
   }
 ?>
-  <!--/*$mpp=5;
-  $total_message='SELECT COUNT(*) AS total FROM messages';
-  $donnees_total=$total_message;
-  $total=$donnees_total['total'];
-  $nb_pages=ceil($total/$mpp);
-  if(isset($_GET['page']))
-  {
-    $page=intval($_GET['page']);
-    if($page>$nb_pages)
-    {
-      $page=$nb_pages;
-    }
-  }
-  else
-  {
-    $page=1;
-  }
-  $index=($page-1)*$mpp;
-  $retour_messages='SELECT * FROM messages ORDER BY id DESC LIMIT '.$index.', '.$mpp.'';
-
-  while($donnees_messages=$retour_messages)
-  {
-    echo '<table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
-                <tr>
-                     <td><strong>Ecrit par : '.$donnees_messages['pseudo'].'</strong></td>
-                </tr>
-                <tr>
-                     <td>'.nl2br($donnees_messages['contenu']).'</td>
-                </tr>
-            </table><br /><br />';
-  }
-  echo '<p align="center">Page : ';
-  for($i=1; $i<=$nb_pages; $i++)
-  {
-     if($i==$page)
-     {
-       echo ' [ '.$i.' ] ';
-     }
-     else
-     {
-       echo ' <a href="messages.php?page='.$i.'">'.$i.'</a> ';
-     }
-   }
-echo '</p>';
-?>*/-->
 
 <?php include('includes/bas.inc.php'); ?>

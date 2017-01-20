@@ -27,6 +27,8 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <!-- On appelle le script jquery.js pour pour pouvoir ajouter le jQuery dans le code -->
+    <script type="text/javascript" src="vendor/jquery/jquery.js"></script>
 
 </head>
 
@@ -50,6 +52,7 @@
                         <a href="#page-top"></a>
                     </li>
                     <li class="page-scroll">
+                      <!-- Rajout du bouton connection -->
                         <a href="connexion.php">Connexion</a>
                 </ul>
             </div>
