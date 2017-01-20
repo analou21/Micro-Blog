@@ -25,41 +25,35 @@ Si la variable id existe et qu'elle n'est pas vide
     }
   }
 ?>
-<?php
 
-/*On affiche les boutons de création, modification et suppression seulement si l'utilisateur est connecté*/
-  if($connecte == true)
-  {
-?>
-    <div class="row">
-      <form method="post" action="message.php">
-        <div class="col-sm-10">
-          <div class="form-group">
-            <textarea id="message" name="message" class="form-control" placeholder="Message">
-              <?php echo $message ?><!-- On affiche le message -->
-            </textarea>
-            <input type="hidden" name="id" value="<?php echo $id ?>"/>
-          </div>
+<div class="row">
+  <form method="post" action="message.php">
+    <div class="col-sm-10">
+        <div class="form-group">
+          <!-- On affiche le message -->
+          <textarea id="message" name="message" class="form-control" placeholder="Message">
+            <?php echo $message ?>
+          </textarea>
+          <input type="hidden" name="id" value="<?php echo $id ?>"/>
         </div>
-        <div class="col-sm-2">
-          <button type="submit" class="btn btn-success btn-lg">Envoyer</button>
-        </div>
-      </form>
     </div>
-<?php
-  }
-?>
+      <div class="col-sm-2">
+        <button type="submit" class="btn btn-success btn-lg">Envoyer</button>
+      </div>
+    </form>
+</div>
+
 <?php
 /*Code consacré à la pagination*/
   $index = 0;
-  $mpp = 4;
+  $mpp = 3;
 
   if(isset($_GET['p']) && !empty($_GET['p']))
   {
     $page = $_GET['p'];
     $index = ($page - 1)* $mpp;
   }
-  $query = 'SELECT * , messages.id as message_id FROM messages INNER JOIN users ON messages.user_id = users.id LIMIT '.$index.','.$mpp.'';
+  $query = 'SELECT * , messages.id as message_id FROM messages INNER JOIN utilisateur ON messages.utilisateur_id = utilisateur.id LIMIT '.$index.','.$mpp.'';
   $stmt = $pdo->prepare($query);
   $stmt->execute();
 /*
@@ -71,32 +65,87 @@ Si l'utilisateur clique sur supprimer, on supprime le message sélectionné
   $stmt = $pdo->query($query);
   while ($data = $stmt->fetch())
   {
+    /*On affiche les boutons de création, modification et suppression seulement si l'utilisateur est connecté*/
+    if($connecte == true)
+    {
 ?>
-    <blockquote>
-      <?= $data['contenu'] ?>
-      <?php
-        if($connecte == true)
-        {
-      ?>
-          <div class="col-sm-2">
-            <?php echo "<a href='index.php?id=" .$data['message_id']. "'></a>" ?>
-          </div>
-          <div class="col-sm-2">
-            <?php echo "<a href='suppression.php?id=" .$data['message_id']. "'></a>" ?>
-          </div>
-      <?php
-        }
-      ?>
-      <!-- Affichage de la date et de l'auteur du message -->
-      <div class="col-sm-12">
-        <?= "Ajouté le ".$data['date'] ?>
-      </div>
-      <div class="col-sm-12">
-        <?= "Ajouté par ".$data['pseudo'] ?>
-      </div>
-    </blockquote>
+      <blockquote>
+        <?= $data['contenu'] ?>
+        <div class="col-sm-2">
+          <?php echo "<a href='index.php?id=" .$data['id']."&p=".$page."'><button type='button' class='btn btn-warning'>Modifier</button></a>" ?>
+        </div>
+        <div class="col-sm-2">
+          <?php echo "<a href='suppression.php?id=" .$data['id']."&p=".$page."'><button type='button' class='btn btn-danger'>Supprimer</button></a>" ?>
+        </div>
+        <div class="col-sm-12">
+          <?= "Ajouté le ".$data['date'] ?>
+        </div>
+      </blockquote>
 <?php
+    }else
+    {
+ ?>
+      <blockquote>
+        <?= $data['contenu'] ?>
+        <div class="col-sm-2">
+          <?php echo "<a href='index.php?id=" .$data['id']. "'></a>" ?>
+        </div>
+        <div class="col-sm-2">
+          <?php echo "<a href='suppression.php?id=" .$data['id']. "'></a>" ?>
+        </div>
+        <div class="col-sm-12">
+          <?= "Ajouté le ".$data['date'] ?>
+        </div>
+      </blockquote>
+ <?php
+    }
   }
 ?>
+
+<?php
+  $requete = 'SELECT COUNT(*) as total_messages FROM messages';
+  $prep = $pdo->query($requete);
+  $data = $prep->fetch();
+  $nombre_message = $data['total_messages'];
+
+  $nb_pages = ($nombre_message) ? ceil($nombre_message/$mpp) : 1;
+  $page = 0;
+  if ($page > 1)
+  {
+    $previous = $page - 1;
+  }else
+  {
+    $previous = 1;
+  }
+  if($page < $nb_pages)
+  {
+    $next = $page + 1;
+  }else
+  {
+    $next = $page;
+  }
+?>
+
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    <li>
+      <a <?php echo "href='index.php?p=$previous'" ?> aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <?php for ($i=1; $i < $nb_pages+1; $i++)
+    {
+    ?>
+      <li>  <?php echo "<a href='index.php?p=$i'>$i</a>" ?></li>
+    <?php
+    }
+    ?>
+    <li>
+      <a <?php echo "href='index.php?p=$next'" ?> aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
 
 <?php include('includes/bas.inc.php'); ?>

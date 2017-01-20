@@ -52,8 +52,9 @@
                         <a href="#page-top"></a>
                     </li>
                     <li class="page-scroll">
+                      <a href="inscription.php">Inscription</a>
                       <!-- Rajout du bouton connection -->
-                        <a href="connexion.php">Connexion</a>
+                      <a href="connexion.php">Connexion</a>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
